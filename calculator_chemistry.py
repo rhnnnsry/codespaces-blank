@@ -5,7 +5,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 from molmass import Formula
 
-st.set_page_config(page_title="ChemLab Calculator Pro", layout="wide")
+st.set_page_config(page_title="ChemLab Calculator V0", layout="wide")
 
 # =========================
 # CUSTOM CSS (MODERN UI)
@@ -27,8 +27,8 @@ h1, h2, h3 {
 </style>
 """, unsafe_allow_html=True)
 
-st.title("🧪 ChemLab Calculator Pro")
-st.write("Aplikasi Kalkulator Kimia Interaktif Berbasis Python & Streamlit")
+st.title("🧪 Chemist Calculator V0")
+st.write("Aplikasi Kalkulator Kimia Interaktif (Masih Tahap Percobaan yee")
 
 menu = st.sidebar.selectbox(
     "Pilih Fitur",
