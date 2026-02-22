@@ -28,7 +28,7 @@ h1, h2, h3 {
 """, unsafe_allow_html=True)
 
 st.title("🧪 Chemist Calculator V0")
-st.write("Aplikasi Kalkulator Kimia Interaktif (Masih Tahap Percobaan yee")
+st.write("Aplikasi Kalkulator Kimia Interaktif (Masih Tahap Percobaan yee)")
 
 menu = st.sidebar.selectbox(
     "Pilih Fitur",
