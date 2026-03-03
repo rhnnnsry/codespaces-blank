@@ -201,8 +201,6 @@ elif menu == "Kalkulator Normalitas":
             st.error("Berat ekuivalen dan volume tidak boleh 0!")
             st.plotly_chart(fig, use_container_width=True)
 
-        else:
-            st.error("Mr dan Volume tidak boleh 0!")
 # ====================================================
 # PERSEN KONSENTRASI
 # ====================================================
