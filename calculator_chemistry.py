@@ -4,6 +4,8 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from molmass import Formula
+from reportlab.platypus import SimpleDocTemplate, Paragraph
+from reportlab.lib.styles import getSampleStyleSheet
 
 st.set_page_config(page_title="ChemLab Calculator V1.1", layout="wide")
 
@@ -33,6 +35,7 @@ st.write("Aplikasi Kalkulator Kimia Interaktif (Update :v)")
 menu = st.sidebar.selectbox(
     "Pilih Fitur",
     [
+        "Dashboard Analisis"
         "Pengenceran (M1V1 = M2V2)",
         "Stoikiometri",
         "Massa Molekul Otomatis",
@@ -341,44 +344,81 @@ elif menu == "Larutan Buffer":
 
             st.success(f"pH Buffer = {pH:.2f}")
 # ====================================================
-# KURVA KALIBRASI
+# KURVA KALIBRASI PRO (LOD, LOQ, STATISTIK)
 # ====================================================
 
 elif menu == "Kurva Kalibrasi Spektrofotometri":
 
-    st.header("Kurva Kalibrasi Spektrofotometri")
+    st.header("Kurva Kalibrasi Spektrofotometri (Pro)")
 
-    st.write("Masukkan data konsentrasi standar dan absorbansi.")
+    st.write("Masukkan data atau upload file Excel")
 
-    konsentrasi = st.text_input(
-        "Konsentrasi standar (pisahkan dengan koma)",
-        "1,2,3,4,5"
-    )
+    konsentrasi = st.text_input("Konsentrasi", "1,2,3,4,5")
+    absorbansi = st.text_input("Absorbansi", "0.12,0.25,0.37,0.50,0.61")
 
-    absorbansi = st.text_input(
-        "Absorbansi (pisahkan dengan koma)",
-        "0.12,0.25,0.37,0.50,0.61"
-    )
-
-    if st.button("Buat Kurva Kalibrasi"):
+    if st.button("Analisis Data"):
 
         x = np.array([float(i) for i in konsentrasi.split(",")])
         y = np.array([float(i) for i in absorbansi.split(",")])
 
         slope, intercept = np.polyfit(x, y, 1)
-
         y_pred = slope * x + intercept
+
+        residuals = y - y_pred
+        std_dev = np.std(residuals)
 
         r2 = 1 - (np.sum((y-y_pred)**2) / np.sum((y-np.mean(y))**2))
 
-        st.success(f"Persamaan regresi: y = {slope:.4f}x + {intercept:.4f}")
+        # LOD & LOQ
+        LOD = 3.3 * std_dev / slope
+        LOQ = 10 * std_dev / slope
+
+        st.success(f"Persamaan: y = {slope:.4f}x + {intercept:.4f}")
         st.success(f"R² = {r2:.4f}")
+        st.success(f"LOD = {LOD:.4f}")
+        st.success(f"LOQ = {LOQ:.4f}")
 
         fig = px.scatter(x=x, y=y, title="Kurva Kalibrasi")
-
         fig.add_scatter(x=x, y=y_pred, mode='lines')
 
-        st.plotly_chart(fig)
+        st.plotly_chart(fig, use_container_width=True)
+# EXPORT PDF
+if st.button("Export ke PDF"):
+
+    doc = SimpleDocTemplate("laporan_kalibrasi.pdf")
+    styles = getSampleStyleSheet()
+
+    content = []
+
+    content.append(Paragraph("Laporan Kurva Kalibrasi", styles['Title']))
+    content.append(Paragraph(f"Persamaan: y = {slope:.4f}x + {intercept:.4f}", styles['Normal']))
+    content.append(Paragraph(f"R2 = {r2:.4f}", styles['Normal']))
+    content.append(Paragraph(f"LOD = {LOD:.4f}", styles['Normal']))
+    content.append(Paragraph(f"LOQ = {LOQ:.4f}", styles['Normal']))
+
+    doc.build(content)
+
+    st.success("PDF berhasil dibuat (cek folder project)")
+# ====================================================
+# DASHBOARD DATA EXCEL
+# ====================================================
+
+st.subheader("Upload & Analisis Data Excel")
+
+file = st.file_uploader("Upload file Excel", type=["xlsx"])
+
+if file is not None:
+
+    data = pd.read_excel(file)
+
+    st.dataframe(data)
+
+    st.subheader("Statistik Data")
+
+    st.write(data.describe())
+
+    fig = px.histogram(data, title="Distribusi Data")
+    st.plotly_chart(fig, use_container_width=True)
 # ====================================================
 # UPLOAD DATA EXCEL
 # ====================================================
@@ -409,3 +449,25 @@ if file is not None:
         fig.add_scatter(x=x, y=y_pred, mode='lines')
 
         st.plotly_chart(fig)
+# ====================================================
+# DASHBOARD ANALISIS
+# ====================================================
+
+elif menu == "Dashboard Analisis":
+
+    st.header("📊 Dashboard Analisis Kimia")
+
+    st.write("Ringkasan hasil perhitungan kimia")
+
+    data = {
+        "Parameter": ["pH", "Molaritas", "Normalitas"],
+        "Nilai": [7, 0.1, 0.1]
+    }
+
+    df = pd.DataFrame(data)
+
+    st.dataframe(df)
+
+    fig = px.bar(df, x="Parameter", y="Nilai", title="Ringkasan Analisis")
+
+    st.plotly_chart(fig, use_container_width=True)
