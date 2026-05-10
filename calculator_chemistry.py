@@ -355,50 +355,50 @@ elif menu == "Kurva Kalibrasi Spektrofotometri":
 
     konsentrasi = st.text_input("Konsentrasi", "1,2,3,4,5")
     absorbansi = st.text_input("Absorbansi", "0.12,0.25,0.37,0.50,0.61")
+    
+    if st.button("Analisis Data"):
 
-   if st.button("Analisis Data"):
+        x = np.array([float(i) for i in konsentrasi.split(",")])
+        y = np.array([float(i) for i in absorbansi.split(",")])
 
-    x = np.array([float(i) for i in konsentrasi.split(",")])
-    y = np.array([float(i) for i in absorbansi.split(",")])
+        slope, intercept = np.polyfit(x, y, 1)
 
-    slope, intercept = np.polyfit(x, y, 1)
+        y_pred = slope * x + intercept
 
-    y_pred = slope * x + intercept
+        residuals = y - y_pred
+        std_dev = np.std(residuals)
 
-    residuals = y - y_pred
-    std_dev = np.std(residuals)
+        r2 = 1 - (np.sum((y-y_pred)**2) / np.sum((y-np.mean(y))**2))
 
-    r2 = 1 - (np.sum((y-y_pred)**2) / np.sum((y-np.mean(y))**2))
+        LOD = 3.3 * std_dev / slope
+        LOQ = 10 * std_dev / slope
 
-    LOD = 3.3 * std_dev / slope
-    LOQ = 10 * std_dev / slope
+        st.success(f"Persamaan: y = {slope:.4f}x + {intercept:.4f}")
 
-    st.success(f"Persamaan: y = {slope:.4f}x + {intercept:.4f}")
+        # ==========================
+        # EXPORT PDF
+        # ==========================
 
-    # ==========================
-    # EXPORT PDF
-    # ==========================
+        if st.button("Export ke PDF"):
 
-    if st.button("Export ke PDF"):
+            doc = SimpleDocTemplate("laporan_kalibrasi.pdf")
+            styles = getSampleStyleSheet()
 
-        doc = SimpleDocTemplate("laporan_kalibrasi.pdf")
-        styles = getSampleStyleSheet()
+            content = []
 
-        content = []
+            content.append(Paragraph(
+                f"Persamaan: y = {slope:.4f}x + {intercept:.4f}",
+                 styles['Normal']
+            ))
 
-        content.append(Paragraph(
-            f"Persamaan: y = {slope:.4f}x + {intercept:.4f}",
-            styles['Normal']
-        ))
+            content.append(Paragraph(
+                f"R2 = {r2:.4f}",
+                styles['Normal']
+            ))
 
-        content.append(Paragraph(
-            f"R2 = {r2:.4f}",
-            styles['Normal']
-        ))
+            doc.build(content)
 
-        doc.build(content)
-
-        st.success("PDF berhasil dibuat!")
+            st.success("PDF berhasil dibuat!")
         
 # ====================================================
 # DASHBOARD DATA EXCEL
