@@ -405,7 +405,11 @@ if st.button("Export ke PDF"):
 
 st.subheader("Upload & Analisis Data Excel")
 
-file = st.file_uploader("Upload file Excel", type=["xlsx"])
+file = st.file_uploader(
+    "Upload file Excel",
+    type=["xlsx"],
+    key="upload_excel_1"
+)
 
 if file is not None:
 
@@ -425,7 +429,11 @@ if file is not None:
 
 st.subheader("Upload Data Excel")
 
-file = st.file_uploader("Upload file Excel", type=["xlsx"])
+file = st.file_uploader(
+    "Upload file Excel",
+    type=["xlsx"],
+    key="upload_excel_1"
+)
 
 if file is not None:
 
