@@ -7,7 +7,7 @@ from molmass import Formula
 from reportlab.platypus import SimpleDocTemplate, Paragraph
 from reportlab.lib.styles import getSampleStyleSheet
 
-st.set_page_config(page_title="ChemLab Calculator V1.1", layout="wide")
+st.set_page_config(page_title="ChemLab Calculator V2,0", layout="wide")
 
 # =========================
 # CUSTOM CSS (MODERN UI)
@@ -29,8 +29,8 @@ h1, h2, h3 {
 </style>
 """, unsafe_allow_html=True)
 
-st.title("🧪 Chemist Calculator V1.1")
-st.write("Aplikasi Kalkulator Kimia Interaktif (Update :v)")
+st.title("🧪 Chemist Calculator V2.0")
+st.write("Aplikasi Kalkulator Kimia Interaktif (Update 9 Mei 2026)")
 
 menu = st.sidebar.selectbox(
     "Pilih Fitur",
