@@ -356,49 +356,50 @@ elif menu == "Kurva Kalibrasi Spektrofotometri":
     konsentrasi = st.text_input("Konsentrasi", "1,2,3,4,5")
     absorbansi = st.text_input("Absorbansi", "0.12,0.25,0.37,0.50,0.61")
 
-    if st.button("Analisis Data"):
+   if st.button("Analisis Data"):
 
-        x = np.array([float(i) for i in konsentrasi.split(",")])
-        y = np.array([float(i) for i in absorbansi.split(",")])
+    x = np.array([float(i) for i in konsentrasi.split(",")])
+    y = np.array([float(i) for i in absorbansi.split(",")])
 
-        slope, intercept = np.polyfit(x, y, 1)
-        y_pred = slope * x + intercept
+    slope, intercept = np.polyfit(x, y, 1)
 
-        residuals = y - y_pred
-        std_dev = np.std(residuals)
+    y_pred = slope * x + intercept
 
-        r2 = 1 - (np.sum((y-y_pred)**2) / np.sum((y-np.mean(y))**2))
+    residuals = y - y_pred
+    std_dev = np.std(residuals)
 
-        # LOD & LOQ
-        LOD = 3.3 * std_dev / slope
-        LOQ = 10 * std_dev / slope
+    r2 = 1 - (np.sum((y-y_pred)**2) / np.sum((y-np.mean(y))**2))
 
-        st.success(f"Persamaan: y = {slope:.4f}x + {intercept:.4f}")
-        st.success(f"R² = {r2:.4f}")
-        st.success(f"LOD = {LOD:.4f}")
-        st.success(f"LOQ = {LOQ:.4f}")
+    LOD = 3.3 * std_dev / slope
+    LOQ = 10 * std_dev / slope
 
-        fig = px.scatter(x=x, y=y, title="Kurva Kalibrasi")
-        fig.add_scatter(x=x, y=y_pred, mode='lines')
+    st.success(f"Persamaan: y = {slope:.4f}x + {intercept:.4f}")
 
-        st.plotly_chart(fig, use_container_width=True)
-# EXPORT PDF
-if st.button("Export ke PDF"):
+    # ==========================
+    # EXPORT PDF
+    # ==========================
 
-    doc = SimpleDocTemplate("laporan_kalibrasi.pdf")
-    styles = getSampleStyleSheet()
+    if st.button("Export ke PDF"):
 
-    content = []
+        doc = SimpleDocTemplate("laporan_kalibrasi.pdf")
+        styles = getSampleStyleSheet()
 
-    content.append(Paragraph("Laporan Kurva Kalibrasi", styles['Title']))
-    content.append(Paragraph(f"Persamaan: y = {slope:.4f}x + {intercept:.4f}", styles['Normal']))
-    content.append(Paragraph(f"R2 = {r2:.4f}", styles['Normal']))
-    content.append(Paragraph(f"LOD = {LOD:.4f}", styles['Normal']))
-    content.append(Paragraph(f"LOQ = {LOQ:.4f}", styles['Normal']))
+        content = []
 
-    doc.build(content)
+        content.append(Paragraph(
+            f"Persamaan: y = {slope:.4f}x + {intercept:.4f}",
+            styles['Normal']
+        ))
 
-    st.success("PDF berhasil dibuat (cek folder project)")
+        content.append(Paragraph(
+            f"R2 = {r2:.4f}",
+            styles['Normal']
+        ))
+
+        doc.build(content)
+
+        st.success("PDF berhasil dibuat!")
+        
 # ====================================================
 # DASHBOARD DATA EXCEL
 # ====================================================
