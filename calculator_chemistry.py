@@ -35,7 +35,7 @@ st.write("Aplikasi Kalkulator Kimia Interaktif (Update 9 Mei 2026)")
 menu = st.sidebar.selectbox(
     "Pilih Fitur",
     [
-        "Dashboard Analisis"
+        "Dashboard Analisis",
         "Pengenceran (M1V1 = M2V2)",
         "Stoikiometri",
         "Massa Molekul Otomatis",
